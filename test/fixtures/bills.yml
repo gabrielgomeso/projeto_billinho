@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bill_cost: 9.99
+  bill_due_date: 2021-01-07 11:16:40
+  status: MyString
+  enrollment: one
+
+two:
+  bill_cost: 9.99
+  bill_due_date: 2021-01-07 11:16:40
+  status: MyString
+  enrollment: two

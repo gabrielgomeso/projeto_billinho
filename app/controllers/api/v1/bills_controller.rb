@@ -18,6 +18,12 @@ class Api::V1::BillsController < ApplicationController
         end
     end
 
+    def update
+    end
+
+    def delete
+    end
+
     private
 
     def bill_params

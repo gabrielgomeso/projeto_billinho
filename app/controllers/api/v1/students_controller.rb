@@ -48,7 +48,7 @@ class Api::V1::StudentsController < ApplicationController
         params.require(:student).permit(:name, :cpf, :birthday, :cellphone, :genre, :payment_method)
     end
 
-    # Define o estudante a partir do parâmetro dado
+    # Encontra o estudante a partir do id dado
     def set_student
         @student = Student.find(params[:id])
     end

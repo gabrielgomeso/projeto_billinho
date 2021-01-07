@@ -48,7 +48,7 @@ class Api::V1::InstitutionsController < ApplicationController
         params.require(:institution).permit(:name, :cnpj, :category)
     end
 
-    # Define a instituição a partir do parâmetro dado
+    # Encontra a instituição a partir do id dado
     def set_institution
         @institution = Institution.find(params[:id])
     end

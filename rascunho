@@ -1,0 +1,35 @@
+Entidades
+
+
+Institution
+institution_id KEY UNIQUE NOTNULL
+name TEXT NOTNULL UNIQUE
+cnpj TEXT NUMBER UNIQUE
+type TEXT "UNIVERSIDADE" or "ESCOLA" or "CRECHE"
+
+Student
+student_id KEY UNIQUE NOTNULL
+name NOTNULL UNIQUE
+cpf INT NOTNULL UNIQUE
+birthday DATE
+cellphone INT
+genre TEXT "M" or "F"
+payment_method TEXT NOTNULL "BOLETO" or "CARTÃO"
+
+Enrollment #Matrícula
+enrollment_id KEY UNIQUE NOTNULL
+course_total_cost DECIMAL NOTNULL 0 >
+bill_quantity INT NOTNULL >= 1 #quantidade de faturas
+bill_due_day INT NOTNULL >= 1 and <= 31 #dia de vencimento das faturas
+course_name TEXT NOTNULL
+institution_id FOREIGNKEY NOTNULL
+student_id FOREIGNKEY NOTNULL
+
+Bill
+bill_id KEY UNIQUE NOTNULL
+bill_cost DECIMAL NOTNULL BRL$
+bill_due_date DATE NOTNULL
+enrollment_id FOREIGNKEY NOTNULL
+status TEXT NOTNULL "ABERTA" (default) or "ATRASADA" or "PAGA"
+
+

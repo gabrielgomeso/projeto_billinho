@@ -4,15 +4,10 @@ class Enrollment < ApplicationRecord
 
   has_many :bills
 
-  validates :course_total_cost, numerically: { only_decimal: true }, presence: true 
+  validates :course_total_cost, numericality: { only_integer: true, greater_than: 0 }, presence: true 
+  validates :bill_quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, presence: true
+  validates :bill_due_day, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 31 }
+  validates :course_name, presence: true
+  validates :institution_id, presence: true
+  validates :student_id, presence: true
 end
-
-
-# Enrollment #Matrícula
-# enrollment_id KEY UNIQUE NOTNULL
-# course_total_cost DECIMAL NOTNULL 0 >
-# bill_quantity INT NOTNULL >= 1 #quantidade de faturas
-# bill_due_day INT NOTNULL >= 1 and <= 31 #dia de vencimento das faturas
-# course_name TEXT NOTNULL
-# institution_id FOREIGNKEY NOTNULL
-# student_id FOREIGNKEY NOTNULL

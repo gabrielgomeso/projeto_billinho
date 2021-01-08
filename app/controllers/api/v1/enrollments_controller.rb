@@ -17,6 +17,19 @@ class Api::V1::EnrollmentsController < ApplicationController
     def create
         @enrollment = Enrollment.new(enrollment_params)
         if @enrollment.save 
+            
+        parcela = @enrollment[:course_total_cost] / @enrollment[:bill_quantity] 
+        @enrollment[:bill_quantity].times do
+            bill = Bill.new({ 
+                "bill_cost": parcela,
+                "bill_due_date": "20/03/2021",
+                "status": "Aberta",
+                "enrollment_id": @enrollment[:id]
+            })
+
+            bill.save
+        end
+    
             render json: @enrollment
         else
             render error: { error: 'Unable to create Enrollment' }, status: 400

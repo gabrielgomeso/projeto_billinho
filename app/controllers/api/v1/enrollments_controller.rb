@@ -10,19 +10,22 @@ class Api::V1::EnrollmentsController < ApplicationController
 
     # Mostra uma matrícula específica
     def show 
-        render json: @enrollment
+        bills = Bill.where(enrollment_id: params[:id])
+        render json: { data: @enrollment, bills: bills }
     end
     
     # Cria uma matrícula
     def create
         @enrollment = Enrollment.new(enrollment_params)
         if @enrollment.save 
-            
+    
         parcela = @enrollment[:course_total_cost] / @enrollment[:bill_quantity] 
+        primeira_fatura = primeira_fatura_maker(@enrollment[:bill_due_day])
+
         @enrollment[:bill_quantity].times do
             bill = Bill.new({ 
                 "bill_cost": parcela,
-                "bill_due_date": "20/03/2021",
+                "bill_due_date": primeira_fatura,
                 "status": "Aberta",
                 "enrollment_id": @enrollment[:id]
             })
@@ -65,4 +68,33 @@ class Api::V1::EnrollmentsController < ApplicationController
     def set_enrollment
         @enrollment = Enrollment.find(params[:id])
     end
+
+
+    # require 'date'
+    # require 'time'
+        
+    # def billingDates(due_day, bills_quantity)
+    # due_dates = []
+
+    # today = Date.today.day
+    # this_month = Date.today.month
+    # next_month = Date.today.next_month.month
+    # this_year = Date.today.year 
+
+    # if due_day >= Time.now.mday
+    #     first_due_date = Date.new(this_year, this_month, due_day) # o dia de vencimento ainda é esse mês
+    # else
+    #     first_due_date = Date.new(this_year, next_month, due_day) # o dia de vencimento ainda é o mês seguinte
+    # end
+
+    # due_dates << first_due_date
+
+    # (bills_quantity - 1).times do
+    #     due_dates << first_due_date
+    # end
+
+    # puts due_dates
+    # end
+
+    # billingDates(20, 6)
 end

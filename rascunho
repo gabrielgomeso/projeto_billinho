@@ -1,6 +1,5 @@
 Entidades
 
-
 Institution
 institution_id KEY UNIQUE NOTNULL
 name TEXT NOTNULL UNIQUE
@@ -32,4 +31,18 @@ bill_due_date DATE NOTNULL
 enrollment_id FOREIGNKEY NOTNULL
 status TEXT NOTNULL "ABERTA" (default) or "ATRASADA" or "PAGA"
 
+
+----------------
+
+
+Lógica do tratamento de datas
+
+Checar se a primeira fatura começa esse mês ou no próximo.
+primeira_fatura = dia_de_vencimento <= dia_de_hoje ?  dia_de_vencimento + mês_que_vem + ano : dia_de_vencimento + mês_atual + ano
+
+Checar se a data é válida
+primeira_fatura.valid_date?
+
+Se sim, fazer as próximas datas a partir dela
+Se não, fazer ela rodar num script pra validar a data, e fazer as próximas a partir dela
 

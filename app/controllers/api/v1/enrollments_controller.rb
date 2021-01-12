@@ -10,30 +10,28 @@ class Api::V1::EnrollmentsController < ApplicationController
 
     # Mostra uma matrícula específica
     def show 
-        bills = Bill.where(enrollment_id: params[:id])
-        render json: { data: @enrollment, bills: bills }
+        render json: @enrollment
     end
     
     # Cria uma matrícula
     def create
         @enrollment = Enrollment.new(enrollment_params)
         if @enrollment.save 
-    
-        parcela = @enrollment[:course_total_cost] / @enrollment[:bill_quantity] 
-        primeira_fatura = primeira_fatura_maker(@enrollment[:bill_due_day])
 
-        @enrollment[:bill_quantity].times do
-            bill = Bill.new({ 
-                "bill_cost": parcela,
-                "bill_due_date": primeira_fatura,
-                "status": "Aberta",
-                "enrollment_id": @enrollment[:id]
-            })
-
+        bills = billingDates(@enrollment[:bill_due_day], @enrollment[:bill_quantity] , @enrollment[:course_total_cost])
+        
+        all_bills = []
+        
+        bills.length.times do |i|
+            due_date = bills[i][:due_date]
+            value = bills[i][:value]
+            
+            bill = Bill.new({ "bill_cost": value, "bill_due_date": due_date, "status": "Aberta", "enrollment_id": @enrollment[:id] })
             bill.save
+            all_bills << bill
         end
+        render json: { status: '200', message: "Registration saved with id #{@enrollment[:id]}", data: @enrollment, bills: all_bills }, status: :ok
     
-            render json: @enrollment
         else
             render error: { error: 'Unable to create Enrollment' }, status: 400
         end
@@ -69,32 +67,33 @@ class Api::V1::EnrollmentsController < ApplicationController
         @enrollment = Enrollment.find(params[:id])
     end
 
+    require 'date'
+    
+    def billingDates(due_day, bills_quantity, total_value)
+        due_dates = []
+        parcels = (total_value.to_f / bills_quantity.to_f).round(2)
 
-    # require 'date'
-    # require 'time'
-        
-    # def billingDates(due_day, bills_quantity)
-    # due_dates = []
+        today = Date.today.day
+        this_month = Date.today.month
+        next_month = Date.today.next_month.month
+        this_year = Date.today.year 
 
-    # today = Date.today.day
-    # this_month = Date.today.month
-    # next_month = Date.today.next_month.month
-    # this_year = Date.today.year 
+        if due_day >= Time.now.mday
+            first_due_date = Date.new(this_year, this_month, due_day) # o dia de vencimento ainda é esse mês
+        else
+            first_due_date = Date.new(this_year, next_month, due_day) # o dia de vencimento ainda é o mês seguinte
+        end
 
-    # if due_day >= Time.now.mday
-    #     first_due_date = Date.new(this_year, this_month, due_day) # o dia de vencimento ainda é esse mês
-    # else
-    #     first_due_date = Date.new(this_year, next_month, due_day) # o dia de vencimento ainda é o mês seguinte
-    # end
+        formatted_date = first_due_date.strftime('%d-%m-%Y')
 
-    # due_dates << first_due_date
+        first_bill = { :due_date => first_due_date, :value => parcels }
 
-    # (bills_quantity - 1).times do
-    #     due_dates << first_due_date
-    # end
+        due_dates <<  first_bill
 
-    # puts due_dates
-    # end
+        (bills_quantity - 1).times do |i|
+            due_dates <<  { :due_date => due_dates[i][:due_date].next_month, :value => parcels }
+        end
 
-    # billingDates(20, 6)
+        due_dates
+    end
 end

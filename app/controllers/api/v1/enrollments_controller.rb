@@ -19,19 +19,9 @@ class Api::V1::EnrollmentsController < ApplicationController
         if @enrollment.save 
 
             # Cria um array com as parcelas
-            bills = BillingManager.new.perform(@enrollment[:bill_due_day], @enrollment[:bill_quantity] , @enrollment[:course_total_cost])
-            all_bills = []
+            bills = BillingManager.new.perform(@enrollment[:bill_due_day], @enrollment[:bill_quantity] , @enrollment[:course_total_cost], @enrollment[:id])
             
-            @enrollment[:bill_quantity].times do |i|
-                due_date = bills[i][:due_date]
-                value = bills[i][:value]
-                
-                bill = Bill.new({ "bill_cost": value, "bill_due_date": due_date, "status": "Aberta", "enrollment_id": @enrollment[:id] })
-                bill.save
-                all_bills << bill
-            end
-            
-            render json: { status: '200', message: "Registration saved with id #{@enrollment[:id]}", data: @enrollment, bills: all_bills }, status: :ok
+            render json: { status: '200', message: "Registration saved with id #{@enrollment[:id]}", data: @enrollment, bills: bills }, status: :ok
     
         else
             render error: { error: 'Unable to create Enrollment' }, status: 400

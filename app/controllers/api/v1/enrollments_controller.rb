@@ -12,17 +12,14 @@ class Api::V1::EnrollmentsController < ApplicationController
     def show 
         render json: @enrollment
     end
-    
+
     # Cria uma matrícula
     def create
         @enrollment = Enrollment.new(enrollment_params)
         if @enrollment.save 
-
-            # Cria um array com as parcelas
-            bills = BillingManager.new.perform(@enrollment[:bill_due_day], @enrollment[:bill_quantity] , @enrollment[:course_total_cost], @enrollment[:id])
-            
+            # Retorna um array com as parcelas já salvas no banco
+            bills = BillingManager.new.perform(@enrollment[:bill_due_day], @enrollment[:bill_quantity] , @enrollment[:course_total_cost], @enrollment[:id])            
             render json: { status: '200', message: "Registration saved with id #{@enrollment[:id]}", data: @enrollment, bills: bills }, status: :ok
-    
         else
             render error: { error: 'Unable to create Enrollment' }, status: 400
         end

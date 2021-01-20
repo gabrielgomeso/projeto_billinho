@@ -4,7 +4,7 @@ class Enrollment < ApplicationRecord
 
   has_many :bills
 
-  validates :course_total_cost, numericality: { only_integer: true, greater_than: 0 }, presence: true 
+  validates :course_total_cost, numericality: { greater_than: 0 }, presence: true 
   validates :bill_quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, presence: true
   validates :bill_due_day, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 31 }
   validates :course_name, presence: true

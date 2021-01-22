@@ -1,56 +1,63 @@
-class Api::V1::BillsController < ApplicationController
-    # Executa, antes dos métodos show, update e destroy, o método set_bill
-    before_action :set_bill, only: [:show, :update, :destroy]
+# frozen_string_literal: true
 
-    # Lista todas as faturas
-    def index
+module Api
+  module V1
+    # Controller class for the Bills model
+    class BillsController < ApplicationController
+      # Execute the set_bill method before show, update and destroy
+      before_action :set_bill, only: %i[show update destroy]
+
+      # List all bills
+      def index
         @bills = Bill.all
         render json: @bills
-    end
+      end
 
-    # Mostra uma fatura específica
-    def show 
+      # Show a bill by the given id
+      def show
         @bill = Bill.find(params[:id])
         render json: @bill
-    end
-    
-    # Cria uma fatura
-    def create
+      end
+
+      # Create a bill
+      def create
         @bill = Bill.new(bill_params)
-        if @bill.save 
-            render json: @bill
+        if @bill.save
+          render json: @bill
         else
-            render error: { error: 'Unable to create Bill' }, status: 400
+          render error: { error: 'Unable to create Bill' }, status: 400
         end
-    end
+      end
 
-    # Atualiza uma fatura
-    def update
+      # Update an enrollment
+      def update
         if @bill.update(bill_params)
-            render json: @bill
+          render json: @bill
         else
-            render error: { error: 'Unable to update Bill' }, status: 400
+          render error: { error: 'Unable to update Bill' }, status: 400
         end
-    end
+      end
 
-    # Deleta uma fatura
-    def delete
+      # Delete an enrollment
+      def delete
         if @bill.destroy
-            render json: { message: 'Bill has been deleted' }, status: 200
+          render json: { message: 'Bill has been deleted' }, status: 200
         else
-            render error: { error: 'Unable to delete Bill' }, status: 400
+          render error: { error: 'Unable to delete Bill' }, status: 400
         end
-    end
+      end
 
-    private
+      private
 
-    # Define os parâmetros permitidos para crair/atualizar a fatura
-    def bill_params
+      # Defines the allowed params to create/update the bill
+      def bill_params
         params.require(:bill).permit(:bill_cost, :bill_due_date, :status, :enrollment_id)
-    end
+      end
 
-    # Encontra a fatura a partir do id dado
-    def set_bill
+      # Finds a bill given the id
+      def set_bill
         @bill = Bill.find(params[:id])
+      end
     end
+  end
 end

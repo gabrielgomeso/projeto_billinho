@@ -1,55 +1,62 @@
-class Api::V1::StudentsController < ApplicationController
-    # Executa, antes dos métodos show, update e destroy, o método set_student
-    before_action :set_student, only: [:show, :update, :destroy]
-    
-    # Lista todos os estudantes
-    def index
+# frozen_string_literal: true
+
+module Api
+  module V1
+    # Controller class for the Student model
+    class StudentsController < ApplicationController
+      # Execute the set_student method before show, update and destroy
+      before_action :set_student, only: %i[show update destroy]
+
+      # List all students
+      def index
         @students = Student.all
         render json: @students
-    end
+      end
 
-    # Mostra um estudante específico
-    def show 
+      # Show an student by the given id
+      def show
         render json: @student
-    end
-    
-    # Cria um estudante
-    def create
+      end
+
+      # Create a student
+      def create
         @student = Student.new(student_params)
-        if @student.save 
-            render json: @student
+        if @student.save
+          render json: @student
         else
-            render error: { error: 'Unable to create Student '}, status: 400
+          render error: { error: 'Unable to create Student ' }, status: 400
         end
-    end
+      end
 
-    # Atualiza um estudante
-    def update
+      # Update a student
+      def update
         if @student.update(student_params)
-            render json: @student
+          render json: @student
         else
-            render error: { error: 'Unable to update Student' }, status: 400
+          render error: { error: 'Unable to update Student' }, status: 400
         end
-    end
+      end
 
-    # Deleta um estudante
-    def destroy
+      # Delete a student
+      def destroy
         if @student.destroy
-            render json: { message: 'Student has been deleted' }, status: 200
+          render json: { message: 'Student has been deleted' }, status: 200
         else
-            render error: { error: 'Unable to delete Student' }, status: 400
+          render error: { error: 'Unable to delete Student' }, status: 400
         end
-    end
+      end
 
-    private
+      private
 
-    # Define os parâmetros permitidos para criar/atualizar o estudante
-    def student_params
+      # Defines the allowed params to create/update the student
+      def student_params
         params.require(:student).permit(:name, :cpf, :birthday, :cellphone, :genre, :payment_method)
-    end
+      end
 
-    # Encontra o estudante a partir do id dado
-    def set_student
+      # Finds a student given the id
+      def set_student
         @student = Student.find(params[:id])
+      end
     end
+  end
 end

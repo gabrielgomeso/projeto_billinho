@@ -1,55 +1,62 @@
-class Api::V1::InstitutionsController < ApplicationController
-    # Executa, antes dos métodos show, update e destroy, o método set_institution
-    before_action :set_institution, only: [:show, :update, :destroy]
+# frozen_string_literal: true
 
-    # Lista todas as instituições
-    def index
+module Api
+  module V1
+    # Controller class for the Institution model
+    class InstitutionsController < ApplicationController
+      # Execute the set_institution method before show, update and destroy
+      before_action :set_institution, only: %i[show update destroy]
+
+      # List all institutions
+      def index
         @institutions = Institution.all
         render json: @institutions
-    end
+      end
 
-    # Mostra uma instituição específica
-    def show 
+      # Show an institution by the given id
+      def show
         render json: @institution
-    end
-    
-    # Cria uma instituição
-    def create
+      end
+
+      # Create an institution
+      def create
         @institution = Institution.new(institution_params)
-        if @institution.save 
-            render json: @institution
+        if @institution.save
+          render json: @institution
         else
-            render error: { error: 'Unable to create Institution' }, status: 400
+          render error: { error: 'Unable to create Institution' }, status: 400
         end
-    end
+      end
 
-    # Atualiza uma instituição
-    def update
+      # Update an enrollment
+      def update
         if @institution.update(institution_params)
-            render json: @institution
+          render json: @institution
         else
-            render error: { error: 'Unable to update Institution' }, status: 400
+          render error: { error: 'Unable to update Institution' }, status: 400
         end
-    end
+      end
 
-    # Deleta uma instituição
-    def destroy
+      # Delete an enrollment
+      def destroy
         if @institution.destroy
-            render json: { message: 'Institution has been deleted' }, status: 200
+          render json: { message: 'Institution has been deleted' }, status: 200
         else
-            render error: { error: 'Unable to delete Institution' }, status: 400
+          render error: { error: 'Unable to delete Institution' }, status: 400
         end
-    end
+      end
 
-    private
+      private
 
-    # Define os parâmetros permitidos para crair/atualizar a instituição
-    def institution_params
+      # Defines the allowed params to create/update the institution
+      def institution_params
         params.require(:institution).permit(:name, :cnpj, :category)
-    end
+      end
 
-    # Encontra a instituição a partir do id dado
-    def set_institution
+      # Finds an institution given the id
+      def set_institution
         @institution = Institution.find(params[:id])
+      end
     end
+  end
 end
